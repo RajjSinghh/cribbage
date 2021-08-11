@@ -79,6 +79,11 @@ class Cribbage:
                 if card[:-1] == pair_card[:-1]:
                     score += 2
 
+        # Knob check
+        for knob in hand[:-1]:
+            if knob[:-1] == "J" and knob[-1] == hand[-1][-1]:
+                score += 1
+
         # Run check
         hand.sort(key=lambda x: self.values[x[:-1]])
         for i, card in enumerate(hand):
@@ -109,19 +114,25 @@ class Cribbage:
             else:
                 score += 4
 
-        # Knob check
-        if hand[-1][:-1] == "J":
-            for knob in hand[:-1]:
-                if knob[-1] == hand[-1][-1]:
-                    score += 1
-        for card in hand[:-1]:
-            if card[:-1] == "J" and card[-1] == hand[-1][-1]:
-                score += 1
-
         # 15 Check
         hand_values = [count_values[i[:-1]] for i in hand]
         score += CheckForFifteens(hand_values) * 2
         return score
+
+    def PlayRound(self):
+        total = 0
+        while total < 31:
+            for player in self.players:
+                # Change here for getting the best card to play at any time
+                card_index = random.randint(0, len(player[1]) - 1)
+                card = player[1].pop(card_index)
+
+                if card[0] == "A":
+                    total += 1
+                elif card[0] == "J" or card[0] == "Q" or card[0] == "K":
+                    total += 10
+
+
 
 
 if __name__ == "__main__":
@@ -132,9 +143,9 @@ if __name__ == "__main__":
     # print(game.crib)
 
     # Score Testing
-    assert game.ScoreHand(["JH", "5H", "5S", "5C", "5D"]) == 29
-    assert game.ScoreHand(["AD", "5H", "4D", "9S", "JH"]) == 7
-    assert game.ScoreHand(["AH", "5H", "4D", "9S", "JH"]) == 8
+    assert game.ScoreHand(["JD", "5H", "5S", "5C", "5D"]) == 29
+    assert game.ScoreHand(["AD", "5H", "4D", "9S", "JH"]) == 6 # 
+    assert game.ScoreHand(["AH", "5H", "4D", "9S", "JH"]) == 6
     assert game.ScoreHand(["AD", "JH", "4D", "9S", "5H"]) == 7
     assert game.ScoreHand(["AH", "8H", "3H", "7H", "5H"]) == 9
     assert game.ScoreHand(["2D", "AD", "JD", "9D", "QH"]) == 4
